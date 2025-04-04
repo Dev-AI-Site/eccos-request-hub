@@ -70,6 +70,19 @@ export interface ReservationRequest extends BaseRequest {
 
 export type Request = PurchaseRequest | SupportRequest | ReservationRequest;
 
+// Define a type for Firestore document data
+interface FirestoreRequestData {
+  userId: string;
+  userName: string;
+  userEmail: string;
+  type: RequestType;
+  status: RequestStatus;
+  createdAt: { toDate: () => Date };
+  updatedAt: { toDate: () => Date };
+  chat: ChatMessage[];
+  [key: string]: any; // For other properties specific to request types
+}
+
 // Get user requests
 export const getUserRequests = async (userId: string): Promise<Request[]> => {
   try {
@@ -82,11 +95,10 @@ export const getUserRequests = async (userId: string): Promise<Request[]> => {
     
     const querySnapshot = await getDocs(requestsQuery);
     return querySnapshot.docs.map(doc => {
-      const data = doc.data();
-      // Use type assertion to tell TypeScript this is a valid document data
+      const data = doc.data() as FirestoreRequestData;
       return {
         id: doc.id,
-        ...data as Omit<Request, 'id'>,
+        ...data,
         createdAt: data.createdAt?.toDate() || new Date(),
         updatedAt: data.updatedAt?.toDate() || new Date(),
       } as Request;
@@ -117,11 +129,10 @@ export const getAllRequests = async (includeCompleted: boolean = false): Promise
     
     const querySnapshot = await getDocs(requestsQuery);
     return querySnapshot.docs.map(doc => {
-      const data = doc.data();
-      // Use type assertion to tell TypeScript this is a valid document data
+      const data = doc.data() as FirestoreRequestData;
       return {
         id: doc.id,
-        ...data as Omit<Request, 'id'>,
+        ...data,
         createdAt: data.createdAt?.toDate() || new Date(),
         updatedAt: data.updatedAt?.toDate() || new Date(),
       } as Request;
@@ -166,7 +177,7 @@ export const updateRequestStatus = async (
     const requestSnap = await getDoc(requestRef);
     
     if (requestSnap.exists()) {
-      const request = requestSnap.data() as Request;
+      const request = requestSnap.data() as FirestoreRequestData;
       const oldStatus = request.status;
       
       await updateDoc(requestRef, {
@@ -176,7 +187,7 @@ export const updateRequestStatus = async (
       
       // Send notification if status changed to Approved or Rejected
       if ((newStatus === "Aprovado" || newStatus === "Reprovado") && oldStatus !== newStatus) {
-        await sendStatusChangeNotification(request, newStatus, userEmail);
+        await sendStatusChangeNotification(request as unknown as Request, newStatus, userEmail);
       }
     }
   } catch (error) {
@@ -197,7 +208,7 @@ export const addChatMessage = async (
     const requestSnap = await getDoc(requestRef);
     
     if (requestSnap.exists()) {
-      const request = requestSnap.data();
+      const request = requestSnap.data() as FirestoreRequestData;
       const chat = request.chat || [];
       
       const newMessage: ChatMessage = {
