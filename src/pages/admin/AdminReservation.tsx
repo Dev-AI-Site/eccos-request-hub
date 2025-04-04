@@ -8,6 +8,16 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
 const AdminReservation = () => {
+  const { isAdmin } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirecionar para o dashboard se não for admin
+  React.useEffect(() => {
+    if (!isAdmin) {
+      navigate("/dashboard");
+    }
+  }, [isAdmin, navigate]);
+
   return (
     <>
       <Header />

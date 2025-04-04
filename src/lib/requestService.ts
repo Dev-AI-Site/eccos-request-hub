@@ -1,6 +1,5 @@
-
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore";
-import { db } from "./firebase";
+import { auth, db } from "./firebase";
 import { sendRequestNotification, sendStatusChangeNotification } from "./emailService";
 
 export type RequestType = "Compra" | "Suporte" | "Reserva";
@@ -86,6 +85,12 @@ interface FirestoreRequestData {
 // Get user requests
 export const getUserRequests = async (userId: string): Promise<Request[]> => {
   try {
+    // Verificar se o usuário está autenticado
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      throw new Error("Usuário não autenticado");
+    }
+    
     // Correção para ordenar primeiro por status e depois por createdAt
     const requestsQuery = query(
       collection(db, "requests"),
@@ -114,6 +119,12 @@ export const getUserRequests = async (userId: string): Promise<Request[]> => {
 // Get all requests for admin
 export const getAllRequests = async (includeCompleted: boolean = false): Promise<Request[]> => {
   try {
+    // Verificar se o usuário está autenticado
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      throw new Error("Usuário não autenticado");
+    }
+    
     let requestsQuery;
     
     if (!includeCompleted) {
@@ -150,6 +161,12 @@ export const getAllRequests = async (includeCompleted: boolean = false): Promise
 // Create a new request
 export const createRequest = async (request: Omit<Request, "id" | "createdAt" | "updatedAt" | "chat">): Promise<string> => {
   try {
+    // Verificar se o usuário está autenticado
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      throw new Error("Usuário não autenticado");
+    }
+    
     const now = new Date();
     const requestWithDates = {
       ...request,
@@ -177,6 +194,12 @@ export const updateRequestStatus = async (
   userEmail: string
 ): Promise<void> => {
   try {
+    // Verificar se o usuário está autenticado
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      throw new Error("Usuário não autenticado");
+    }
+    
     const requestRef = doc(db, "requests", requestId);
     const requestSnap = await getDoc(requestRef);
     
@@ -208,6 +231,12 @@ export const addChatMessage = async (
   message: string
 ): Promise<void> => {
   try {
+    // Verificar se o usuário está autenticado
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      throw new Error("Usuário não autenticado");
+    }
+    
     const requestRef = doc(db, "requests", requestId);
     const requestSnap = await getDoc(requestRef);
     
@@ -236,6 +265,12 @@ export const addChatMessage = async (
 // Delete request (admin only)
 export const deleteRequest = async (requestId: string): Promise<void> => {
   try {
+    // Verificar se o usuário está autenticado
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      throw new Error("Usuário não autenticado");
+    }
+    
     await deleteDoc(doc(db, "requests", requestId));
   } catch (error) {
     console.error("Error deleting request:", error);

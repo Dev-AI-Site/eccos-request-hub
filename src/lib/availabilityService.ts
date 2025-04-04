@@ -1,6 +1,6 @@
 
 import { addDoc, collection, deleteDoc, doc, getDocs, query, where } from "firebase/firestore";
-import { db } from "./firebase";
+import { auth, db } from "./firebase";
 
 export interface AvailabilityDate {
   id?: string;
@@ -11,6 +11,12 @@ export interface AvailabilityDate {
 // Get available dates
 export const getAvailableDates = async (): Promise<AvailabilityDate[]> => {
   try {
+    // Verificar se o usuário está autenticado
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      throw new Error("Usuário não autenticado");
+    }
+    
     const availabilityQuery = query(
       collection(db, "availability"),
       where("isAvailable", "==", true)
@@ -32,6 +38,12 @@ export const getAvailableDates = async (): Promise<AvailabilityDate[]> => {
 // Add available date
 export const addAvailableDate = async (date: Date): Promise<string> => {
   try {
+    // Verificar se o usuário está autenticado
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      throw new Error("Usuário não autenticado");
+    }
+    
     const availabilityData = {
       date,
       isAvailable: true,
@@ -48,6 +60,12 @@ export const addAvailableDate = async (date: Date): Promise<string> => {
 // Remove available date
 export const removeAvailableDate = async (dateId: string): Promise<void> => {
   try {
+    // Verificar se o usuário está autenticado
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      throw new Error("Usuário não autenticado");
+    }
+    
     await deleteDoc(doc(db, "availability", dateId));
   } catch (error) {
     console.error("Error removing available date:", error);
@@ -58,6 +76,12 @@ export const removeAvailableDate = async (dateId: string): Promise<void> => {
 // Check if date is available
 export const isDateAvailable = async (date: Date): Promise<boolean> => {
   try {
+    // Verificar se o usuário está autenticado
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      throw new Error("Usuário não autenticado");
+    }
+    
     // Convert to start of day for comparison
     const startDate = new Date(date);
     startDate.setHours(0, 0, 0, 0);

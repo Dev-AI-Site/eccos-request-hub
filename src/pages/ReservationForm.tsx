@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -83,6 +82,10 @@ const ReservationForm = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
+        if (!user) {
+          throw new Error("Usuário não autenticado");
+        }
+        
         const [equipment, dates] = await Promise.all([
           getAllEquipment(),
           getAvailableDates(),
@@ -95,16 +98,19 @@ const ReservationForm = () => {
         console.error("Error fetching data:", error);
         toast({
           title: "Erro",
-          description: "Não foi possível carregar os dados necessários.",
+          description: "Não foi possível carregar os dados necessários. Por favor, faça login novamente.",
           variant: "destructive",
         });
+        if (error instanceof Error && error.message.includes("autenticado")) {
+          navigate("/login");
+        }
       } finally {
         setIsLoading(false);
       }
     };
     
     fetchData();
-  }, [toast]);
+  }, [toast, navigate, user]);
   
   useEffect(() => {
     let filtered = [...equipmentList];
@@ -201,7 +207,6 @@ const ReservationForm = () => {
         return;
       }
       
-      // Create the reservation data - removed the chat field as it's handled in createRequest
       const reservationData: Omit<ReservationRequest, "id" | "createdAt" | "updatedAt" | "chat"> = {
         userId: user.uid,
         userName: user.displayName || user.email!,
@@ -275,7 +280,7 @@ const ReservationForm = () => {
                         <SelectValue placeholder="Tipo" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Todos os tipos</SelectItem>
+                        <SelectItem value="todos">Todos os tipos</SelectItem>
                         <SelectItem value="Chromebook">Chromebook</SelectItem>
                         <SelectItem value="iPad">iPad</SelectItem>
                       </SelectContent>
