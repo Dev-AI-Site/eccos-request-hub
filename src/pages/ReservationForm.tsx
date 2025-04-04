@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -200,6 +201,7 @@ const ReservationForm = () => {
         return;
       }
       
+      // Create the reservation data - removed the chat field as it's handled in createRequest
       const reservationData: Omit<ReservationRequest, "id" | "createdAt" | "updatedAt" | "chat"> = {
         userId: user.uid,
         userName: user.displayName || user.email!,
@@ -213,8 +215,7 @@ const ReservationForm = () => {
         startTime,
         endTime,
         location,
-        purpose,
-        chat: []
+        purpose
       };
       
       await createRequest(reservationData);

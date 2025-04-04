@@ -83,11 +83,12 @@ export const getUserRequests = async (userId: string): Promise<Request[]> => {
     const querySnapshot = await getDocs(requestsQuery);
     return querySnapshot.docs.map(doc => {
       const data = doc.data();
+      // Use type assertion to tell TypeScript this is a valid document data
       return {
         id: doc.id,
-        ...data,
-        createdAt: data.createdAt.toDate(),
-        updatedAt: data.updatedAt.toDate(),
+        ...data as Omit<Request, 'id'>,
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
       } as Request;
     });
   } catch (error) {
@@ -117,11 +118,12 @@ export const getAllRequests = async (includeCompleted: boolean = false): Promise
     const querySnapshot = await getDocs(requestsQuery);
     return querySnapshot.docs.map(doc => {
       const data = doc.data();
+      // Use type assertion to tell TypeScript this is a valid document data
       return {
         id: doc.id,
-        ...data,
-        createdAt: data.createdAt.toDate(),
-        updatedAt: data.updatedAt.toDate(),
+        ...data as Omit<Request, 'id'>,
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
       } as Request;
     });
   } catch (error) {
