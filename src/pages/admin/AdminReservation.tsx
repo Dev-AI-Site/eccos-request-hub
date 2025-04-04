@@ -1,0 +1,30 @@
+
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import Header from "@/components/Header";
+import ReservationForm from "../ReservationForm";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+
+const AdminReservation = () => {
+  return (
+    <>
+      <Header />
+      <div className="container mx-auto px-4 py-8">
+        <Alert variant="default" className="mb-8 bg-amber-50 text-amber-800 border-amber-200">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Modo Administrador</AlertTitle>
+          <AlertDescription>
+            Como administrador, você pode fazer reservas sem restrições de disponibilidade. 
+            Use essa funcionalidade com responsabilidade.
+          </AlertDescription>
+        </Alert>
+        
+        <ReservationForm />
+      </div>
+    </>
+  );
+};
+
+export default AdminReservation;
