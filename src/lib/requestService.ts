@@ -81,12 +81,15 @@ export const getUserRequests = async (userId: string): Promise<Request[]> => {
     );
     
     const querySnapshot = await getDocs(requestsQuery);
-    return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt.toDate(),
-      updatedAt: doc.data().updatedAt.toDate(),
-    } as Request));
+    return querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt.toDate(),
+        updatedAt: data.updatedAt.toDate(),
+      } as Request;
+    });
   } catch (error) {
     console.error("Error getting user requests:", error);
     throw error;
@@ -112,12 +115,15 @@ export const getAllRequests = async (includeCompleted: boolean = false): Promise
     }
     
     const querySnapshot = await getDocs(requestsQuery);
-    return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt.toDate(),
-      updatedAt: doc.data().updatedAt.toDate(),
-    } as Request));
+    return querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt.toDate(),
+        updatedAt: data.updatedAt.toDate(),
+      } as Request;
+    });
   } catch (error) {
     console.error("Error getting all requests:", error);
     throw error;

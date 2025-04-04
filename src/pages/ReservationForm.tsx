@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,7 +19,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Equipment, getAllEquipment, getEquipmentByType } from "@/lib/equipmentService";
 import { getAvailableDates, isDateAvailable } from "@/lib/availabilityService";
-import { EquipmentType, createRequest } from "@/lib/requestService";
+import { EquipmentType, ReservationRequest, createRequest } from "@/lib/requestService";
 
 const locations = [
   'Recepção',
@@ -79,7 +78,6 @@ const ReservationForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   
-  // Fetch equipment and available dates
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -107,7 +105,6 @@ const ReservationForm = () => {
     fetchData();
   }, [toast]);
   
-  // Filter equipment
   useEffect(() => {
     let filtered = [...equipmentList];
     
@@ -191,7 +188,6 @@ const ReservationForm = () => {
     try {
       setIsSubmitting(true);
       
-      // Check if the date is available
       const dateAvailable = await isDateAvailable(selectedDate!);
       
       if (!dateAvailable) {
@@ -204,7 +200,7 @@ const ReservationForm = () => {
         return;
       }
       
-      await createRequest({
+      const reservationData: Omit<ReservationRequest, "id" | "createdAt" | "updatedAt" | "chat"> = {
         userId: user.uid,
         userName: user.displayName || user.email!,
         userEmail: user.email!,
@@ -218,14 +214,16 @@ const ReservationForm = () => {
         endTime,
         location,
         purpose,
-      });
+        chat: []
+      };
+      
+      await createRequest(reservationData);
       
       toast({
         title: "Reserva enviada",
         description: "Sua solicitação de reserva foi enviada com sucesso!",
       });
       
-      // Redirect to dashboard
       navigate("/dashboard");
     } catch (error) {
       console.error("Error creating reservation:", error);
@@ -356,7 +354,6 @@ const ReservationForm = () => {
                             selected={selectedDate}
                             onSelect={setSelectedDate}
                             disabled={(date) => {
-                              // Disable past dates and dates not in availableDates
                               const today = new Date();
                               today.setHours(0, 0, 0, 0);
                               

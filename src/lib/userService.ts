@@ -9,10 +9,13 @@ export const getAllUsers = async (): Promise<UserData[]> => {
     const usersQuery = query(collection(db, "users"));
     const querySnapshot = await getDocs(usersQuery);
     
-    return querySnapshot.docs.map(doc => ({
-      ...doc.data(),
-      lastLogin: doc.data().lastLogin.toDate(),
-    } as UserData));
+    return querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        ...data,
+        lastLogin: data.lastLogin?.toDate(),
+      } as UserData;
+    });
   } catch (error) {
     console.error("Error getting users:", error);
     throw error;
