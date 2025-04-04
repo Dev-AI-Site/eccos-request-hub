@@ -1,5 +1,5 @@
 
-import { collection, doc, getDocs, query, updateDoc } from "firebase/firestore";
+import { collection, doc, getDocs, query, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
 import { UserData, UserRole } from "./authService";
 
@@ -27,9 +27,9 @@ export const updateUserRole = async (
   try {
     // Prevent changing role of main admin account
     const userDocRef = doc(db, "users", userId);
-    const userDoc = await doc(db, "users", userId).get();
+    const userDocSnap = await getDoc(userDocRef);
     
-    if (userDoc.data()?.email === "suporte@colegioeccos.com.br") {
+    if (userDocSnap.exists() && userDocSnap.data()?.email === "suporte@colegioeccos.com.br") {
       throw new Error("Não é possível alterar o papel do usuário suporte@colegioeccos.com.br");
     }
     

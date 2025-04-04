@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -12,7 +11,7 @@ import { Trash2, Plus } from "lucide-react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ConfirmationDialog from "@/components/ConfirmationDialog";
 import { useToast } from "@/hooks/use-toast";
-import { PurchaseItem, createRequest } from "@/lib/requestService";
+import { PurchaseItem, createRequest, PurchaseRequest } from "@/lib/requestService";
 
 const PurchaseForm = () => {
   const navigate = useNavigate();
@@ -51,7 +50,6 @@ const PurchaseForm = () => {
     const newItems = [...items];
     
     if (field === "unitPrice" || field === "quantity") {
-      // Convert to number and ensure it's not negative
       const numValue = typeof value === "string" ? parseFloat(value) : value;
       newItems[index][field] = Math.max(0, isNaN(numValue) ? 0 : numValue);
     } else {
@@ -66,7 +64,6 @@ const PurchaseForm = () => {
   };
   
   const validateForm = () => {
-    // Check if any item is empty
     for (const item of items) {
       if (!item.name.trim()) {
         toast({
@@ -105,7 +102,6 @@ const PurchaseForm = () => {
       return false;
     }
     
-    // Validate URL if provided
     if (purchaseLink.trim() && !isValidURL(purchaseLink)) {
       toast({
         title: "Link inválido",
@@ -139,18 +135,17 @@ const PurchaseForm = () => {
         userEmail: user.email!,
         type: "Compra",
         status: "Pendente",
-        items,
+        items: items,
         totalPrice: calculateTotal(),
         purpose,
         purchaseLink: purchaseLink.trim() || undefined,
-      });
+      } as PurchaseRequest);
       
       toast({
         title: "Solicitação enviada",
         description: "Sua solicitação de compra foi enviada com sucesso!",
       });
       
-      // Redirect to dashboard
       navigate("/dashboard");
     } catch (error) {
       console.error("Error creating purchase request:", error);

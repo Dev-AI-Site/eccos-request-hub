@@ -138,7 +138,7 @@ export const createRequest = async (request: Omit<Request, "id" | "createdAt" | 
     const docRef = await addDoc(collection(db, "requests"), requestWithDates);
     
     // Send email notification to all admins
-    await sendRequestNotification(request);
+    await sendRequestNotification(requestWithDates as Request);
     
     return docRef.id;
   } catch (error) {

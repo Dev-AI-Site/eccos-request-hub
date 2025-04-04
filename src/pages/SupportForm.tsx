@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -11,9 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import ConfirmationDialog from "@/components/ConfirmationDialog";
 import { useToast } from "@/hooks/use-toast";
-import { SupportCategory, Unit, createRequest } from "@/lib/requestService";
+import { SupportCategory, Unit, createRequest, SupportRequest } from "@/lib/requestService";
 
-// Locations by unit
 const locationsByUnit: Record<Unit, string[]> = {
   'Berçário e Educação Infantil': [
     'Recepção',
@@ -154,7 +152,7 @@ const SupportForm = () => {
         location,
         category: category as SupportCategory,
         description,
-      });
+      } as SupportRequest);
       
       toast({
         title: "Solicitação enviada",

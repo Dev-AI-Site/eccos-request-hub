@@ -38,7 +38,7 @@ export const sendEmail = async (
 };
 
 // Enviar notificação de nova solicitação para todos os admins
-export const sendRequestNotification = async (request: Omit<Request, "id" | "createdAt" | "updatedAt" | "chat">): Promise<void> => {
+export const sendRequestNotification = async (request: Request): Promise<void> => {
   try {
     // Get all admin emails
     const adminsQuery = query(
@@ -62,21 +62,21 @@ export const sendRequestNotification = async (request: Omit<Request, "id" | "cre
     // Adicionar detalhes específicos por tipo
     if (request.type === "Compra") {
       body += `
-        <p><strong>Finalidade:</strong> ${request.purpose}</p>
-        <p><strong>Valor Total:</strong> R$ ${request.totalPrice.toFixed(2)}</p>
+        <p><strong>Finalidade:</strong> ${(request as any).purpose}</p>
+        <p><strong>Valor Total:</strong> R$ ${(request as any).totalPrice.toFixed(2)}</p>
       `;
     } else if (request.type === "Suporte") {
       body += `
-        <p><strong>Unidade:</strong> ${request.unit}</p>
-        <p><strong>Local:</strong> ${request.location}</p>
-        <p><strong>Categoria:</strong> ${request.category}</p>
+        <p><strong>Unidade:</strong> ${(request as any).unit}</p>
+        <p><strong>Local:</strong> ${(request as any).location}</p>
+        <p><strong>Categoria:</strong> ${(request as any).category}</p>
       `;
     } else if (request.type === "Reserva") {
       body += `
-        <p><strong>Equipamento:</strong> ${request.equipmentName} (${request.equipmentType})</p>
-        <p><strong>Data:</strong> ${request.date.toLocaleDateString()}</p>
-        <p><strong>Horário:</strong> ${request.startTime} às ${request.endTime}</p>
-        <p><strong>Local:</strong> ${request.location}</p>
+        <p><strong>Equipamento:</strong> ${(request as any).equipmentName} (${(request as any).equipmentType})</p>
+        <p><strong>Data:</strong> ${(request as any).date.toLocaleDateString()}</p>
+        <p><strong>Horário:</strong> ${(request as any).startTime} às ${(request as any).endTime}</p>
+        <p><strong>Local:</strong> ${(request as any).location}</p>
       `;
     }
     
