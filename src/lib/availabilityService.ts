@@ -11,8 +11,9 @@ export interface AvailabilityDate {
 // Get available dates
 export const getAvailableDates = async (): Promise<AvailabilityDate[]> => {
   try {
-    // Verificar se o usuário está autenticado
     const currentUser = auth.currentUser;
+    
+    // Verificar se o usuário está autenticado
     if (!currentUser) {
       throw new Error("Usuário não autenticado");
     }
@@ -38,8 +39,9 @@ export const getAvailableDates = async (): Promise<AvailabilityDate[]> => {
 // Add available date
 export const addAvailableDate = async (date: Date): Promise<string> => {
   try {
-    // Verificar se o usuário está autenticado
     const currentUser = auth.currentUser;
+    
+    // Verificar se o usuário está autenticado
     if (!currentUser) {
       throw new Error("Usuário não autenticado");
     }
@@ -60,8 +62,9 @@ export const addAvailableDate = async (date: Date): Promise<string> => {
 // Remove available date
 export const removeAvailableDate = async (dateId: string): Promise<void> => {
   try {
-    // Verificar se o usuário está autenticado
     const currentUser = auth.currentUser;
+    
+    // Verificar se o usuário está autenticado
     if (!currentUser) {
       throw new Error("Usuário não autenticado");
     }
@@ -76,8 +79,9 @@ export const removeAvailableDate = async (dateId: string): Promise<void> => {
 // Check if date is available
 export const isDateAvailable = async (date: Date): Promise<boolean> => {
   try {
-    // Verificar se o usuário está autenticado
     const currentUser = auth.currentUser;
+    
+    // Verificar se o usuário está autenticado
     if (!currentUser) {
       throw new Error("Usuário não autenticado");
     }

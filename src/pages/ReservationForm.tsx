@@ -65,7 +65,7 @@ const ReservationForm = () => {
   const [equipmentList, setEquipmentList] = useState<Equipment[]>([]);
   const [filteredEquipment, setFilteredEquipment] = useState<Equipment[]>([]);
   const [availableDates, setAvailableDates] = useState<Date[]>([]);
-  const [equipmentTypeFilter, setEquipmentTypeFilter] = useState<EquipmentType | "">("");
+  const [equipmentTypeFilter, setEquipmentTypeFilter] = useState<EquipmentType | "todos">("todos");
   const [equipmentNameFilter, setEquipmentNameFilter] = useState("");
   
   const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
@@ -115,7 +115,7 @@ const ReservationForm = () => {
   useEffect(() => {
     let filtered = [...equipmentList];
     
-    if (equipmentTypeFilter) {
+    if (equipmentTypeFilter && equipmentTypeFilter !== "todos") {
       filtered = filtered.filter(eq => eq.type === equipmentTypeFilter);
     }
     
@@ -274,7 +274,7 @@ const ReservationForm = () => {
                   </CardDescription>
                   
                   <div className="flex flex-col sm:flex-row gap-2 mt-2">
-                    <Select value={equipmentTypeFilter} onValueChange={(value) => setEquipmentTypeFilter(value as EquipmentType | "")}>
+                    <Select value={equipmentTypeFilter} onValueChange={(value) => setEquipmentTypeFilter(value as EquipmentType | "todos")}>
                       <SelectTrigger>
                         <Filter className="mr-2 h-4 w-4" />
                         <SelectValue placeholder="Tipo" />

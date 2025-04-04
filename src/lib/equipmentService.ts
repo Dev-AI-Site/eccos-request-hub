@@ -14,12 +14,14 @@ export interface Equipment {
 // Get all equipment
 export const getAllEquipment = async (): Promise<Equipment[]> => {
   try {
-    // Verificar se o usuário está autenticado
     const currentUser = auth.currentUser;
+    
+    // Verificar se o usuário está autenticado
     if (!currentUser) {
       throw new Error("Usuário não autenticado");
     }
     
+    // Buscar todos os equipamentos
     const equipmentQuery = query(collection(db, "equipment"));
     const querySnapshot = await getDocs(equipmentQuery);
     
@@ -36,8 +38,9 @@ export const getAllEquipment = async (): Promise<Equipment[]> => {
 // Get equipment by type
 export const getEquipmentByType = async (type: EquipmentType): Promise<Equipment[]> => {
   try {
-    // Verificar se o usuário está autenticado
     const currentUser = auth.currentUser;
+    
+    // Verificar se o usuário está autenticado
     if (!currentUser) {
       throw new Error("Usuário não autenticado");
     }
@@ -62,8 +65,9 @@ export const getEquipmentByType = async (type: EquipmentType): Promise<Equipment
 // Add new equipment
 export const addEquipment = async (equipment: Omit<Equipment, "id">): Promise<string> => {
   try {
-    // Verificar se o usuário está autenticado
     const currentUser = auth.currentUser;
+    
+    // Verificar se o usuário está autenticado
     if (!currentUser) {
       throw new Error("Usuário não autenticado");
     }
@@ -79,8 +83,9 @@ export const addEquipment = async (equipment: Omit<Equipment, "id">): Promise<st
 // Delete equipment
 export const deleteEquipment = async (equipmentId: string): Promise<void> => {
   try {
-    // Verificar se o usuário está autenticado
     const currentUser = auth.currentUser;
+    
+    // Verificar se o usuário está autenticado
     if (!currentUser) {
       throw new Error("Usuário não autenticado");
     }
