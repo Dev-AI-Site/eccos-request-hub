@@ -86,11 +86,13 @@ interface FirestoreRequestData {
 // Get user requests
 export const getUserRequests = async (userId: string): Promise<Request[]> => {
   try {
+    // Correção para ordenar primeiro por status e depois por createdAt
     const requestsQuery = query(
       collection(db, "requests"),
       where("userId", "==", userId),
       where("status", "!=", "Cancelado"),
-      orderBy("createdAt", "desc")
+      orderBy("status"), // Primeiro ordenamos pelo campo com desigualdade
+      orderBy("createdAt", "desc") // Depois podemos ordenar por createdAt
     );
     
     const querySnapshot = await getDocs(requestsQuery);
@@ -115,10 +117,12 @@ export const getAllRequests = async (includeCompleted: boolean = false): Promise
     let requestsQuery;
     
     if (!includeCompleted) {
+      // Correção similar aqui, ordenando primeiro por status
       requestsQuery = query(
         collection(db, "requests"),
         where("status", "in", ["Pendente", "Aprovado", "Em Andamento"]),
-        orderBy("createdAt", "desc")
+        orderBy("status"), // Primeiro ordenamos pelo campo com condição
+        orderBy("createdAt", "desc") // Depois ordenamos por data
       );
     } else {
       requestsQuery = query(

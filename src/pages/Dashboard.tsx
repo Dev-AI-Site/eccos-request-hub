@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -31,8 +30,8 @@ const Dashboard = () => {
   const [requests, setRequests] = useState<Request[]>([]);
   const [filteredRequests, setFilteredRequests] = useState<Request[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [typeFilter, setTypeFilter] = useState<RequestType | "">("");
-  const [statusFilter, setStatusFilter] = useState<RequestStatus | "">("");
+  const [typeFilter, setTypeFilter] = useState<RequestType | "todos">('todos');
+  const [statusFilter, setStatusFilter] = useState<RequestStatus | "todos">('todos');
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -67,11 +66,11 @@ const Dashboard = () => {
   useEffect(() => {
     let result = [...requests];
 
-    if (typeFilter) {
+    if (typeFilter !== 'todos') {
       result = result.filter((request) => request.type === typeFilter);
     }
 
-    if (statusFilter) {
+    if (statusFilter !== 'todos') {
       result = result.filter((request) => request.status === statusFilter);
     }
 
@@ -393,26 +392,26 @@ const Dashboard = () => {
 
               <div className="flex flex-col sm:flex-row gap-2">
                 <div className="flex items-center gap-2">
-                  <Select value={typeFilter} onValueChange={(value) => setTypeFilter(value as RequestType | "")}>
+                  <Select value={typeFilter} onValueChange={(value) => setTypeFilter(value as RequestType | "todos")}>
                     <SelectTrigger className="w-[180px]">
                       <Filter className="mr-2 h-4 w-4" />
                       <SelectValue placeholder="Tipo" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Todos os tipos</SelectItem>
+                      <SelectItem value="todos">Todos os tipos</SelectItem>
                       <SelectItem value="Compra">Compra</SelectItem>
                       <SelectItem value="Suporte">Suporte</SelectItem>
                       <SelectItem value="Reserva">Reserva</SelectItem>
                     </SelectContent>
                   </Select>
 
-                  <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as RequestStatus | "")}>
+                  <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as RequestStatus | "todos")}>
                     <SelectTrigger className="w-[180px]">
                       <Filter className="mr-2 h-4 w-4" />
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Todos os status</SelectItem>
+                      <SelectItem value="todos">Todos os status</SelectItem>
                       <SelectItem value="Pendente">Pendente</SelectItem>
                       <SelectItem value="Aprovado">Aprovado</SelectItem>
                       <SelectItem value="Reprovado">Reprovado</SelectItem>
