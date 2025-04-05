@@ -274,12 +274,16 @@ const Dashboard = () => {
             <div>
               <h3 className="font-medium">Equipamento</h3>
               <p className="mt-1 text-gray-700">
-                {request.equipment.map((eq, index) => (
-                  <span key={eq.equipmentId}>
-                    {eq.equipmentName} ({eq.equipmentType})
-                    {index < request.equipment.length - 1 ? ', ' : ''}
-                  </span>
-                ))}
+                {request.equipment && request.equipment.length > 0 ? (
+                  request.equipment.map((eq, index) => (
+                    <span key={eq.equipmentId}>
+                      {eq.equipmentName} ({eq.equipmentType})
+                      {index < request.equipment.length - 1 ? ', ' : ''}
+                    </span>
+                  ))
+                ) : (
+                  <span>Sem equipamentos</span>
+                )}
               </p>
             </div>
             <div>
@@ -529,7 +533,13 @@ const Dashboard = () => {
                           )}
                           {request.type === "Reserva" && (
                             <p className="truncate text-sm">
-                              {request.equipment[0].equipmentName} {request.equipment.length > 1 ? `(+${request.equipment.length - 1})` : ''} - {format(request.date, "dd/MM/yyyy")}
+                              {request.equipment && request.equipment.length > 0 ? (
+                                <>
+                                  {request.equipment[0].equipmentName} {request.equipment.length > 1 ? `(+${request.equipment.length - 1})` : ''} - {format(request.date, "dd/MM/yyyy")}
+                                </>
+                              ) : (
+                                <>Sem equipamentos - {format(request.date, "dd/MM/yyyy")}</>
+                              )}
                             </p>
                           )}
                           <Button
