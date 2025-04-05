@@ -47,6 +47,12 @@ const ProtectedRoute = ({ children, adminRequired = false }: {
   return <>{children}</>;
 };
 
+// Home component to redirect based on user role
+const Home = () => {
+  const { getHomePath } = useAuth();
+  return <Navigate to={getHomePath()} replace />;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -57,15 +63,17 @@ const App = () => (
           <Routes>
             <Route path="/login" element={<Login />} />
             
-            {/* Protected User Routes */}
+            {/* Home route with smart redirection */}
             <Route 
               path="/" 
               element={
                 <ProtectedRoute>
-                  <Navigate to="/dashboard" replace />
+                  <Home />
                 </ProtectedRoute>
               } 
             />
+            
+            {/* Protected User Routes */}
             <Route 
               path="/dashboard" 
               element={
@@ -104,7 +112,7 @@ const App = () => (
               path="/admin" 
               element={
                 <ProtectedRoute adminRequired>
-                  <Navigate to="/admin/equipamentos" replace />
+                  <Navigate to="/admin/solicitacoes" replace />
                 </ProtectedRoute>
               } 
             />

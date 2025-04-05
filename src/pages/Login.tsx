@@ -9,14 +9,15 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, getHomePath } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
     if (user) {
-      navigate("/dashboard");
+      const redirectPath = getHomePath();
+      navigate(redirectPath);
     }
-  }, [user, navigate]);
+  }, [user, navigate, getHomePath]);
 
   const handleLogin = async () => {
     try {

@@ -10,6 +10,7 @@ interface AuthContextType {
   userRole: UserRole | null;
   isLoading: boolean;
   isAdmin: boolean;
+  getHomePath: () => string; // Nova função para obter o caminho inicial com base no papel do usuário
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -17,6 +18,7 @@ const AuthContext = createContext<AuthContextType>({
   userRole: null,
   isLoading: true,
   isAdmin: false,
+  getHomePath: () => "/dashboard", // Valor padrão
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -24,6 +26,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userRole, setUserRole] = useState<UserRole | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+
+  // Função para determinar o caminho inicial com base no papel do usuário
+  const getHomePath = () => {
+    if (userRole === "admin") {
+      return "/admin/solicitacoes";
+    }
+    return "/dashboard";
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -86,6 +96,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     userRole,
     isLoading,
     isAdmin: userRole === "admin",
+    getHomePath,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
