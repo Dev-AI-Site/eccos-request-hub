@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
@@ -14,7 +15,7 @@ import Chat from "@/components/Chat";
 import ConfirmationDialog from "@/components/ConfirmationDialog";
 import { Request, RequestStatus, RequestType, addChatMessage, deleteRequest, getAllRequests, updateRequestStatus } from "@/lib/requestService";
 import { Check, Eye, Filter, MoreHorizontal, Search, Trash2 } from "lucide-react";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -322,18 +323,25 @@ const AdminRequests = () => {
             <div>
               <h3 className="font-medium">Equipamento</h3>
               <p className="mt-1 text-gray-700">
-                {request.equipment.map((eq, index) => (
-                  <span key={eq.equipmentId}>
-                    {eq.equipmentName} ({eq.equipmentType})
-                    {index < request.equipment.length - 1 ? ', ' : ''}
-                  </span>
-                ))}
+                {request.equipment && request.equipment.length > 0 ? (
+                  request.equipment.map((eq, index) => (
+                    <span key={eq.equipmentId}>
+                      {eq.equipmentName} ({eq.equipmentType})
+                      {index < request.equipment.length - 1 ? ', ' : ''}
+                    </span>
+                  ))
+                ) : (
+                  <span>Sem equipamentos</span>
+                )}
               </p>
             </div>
             <div>
               <h3 className="font-medium">Data</h3>
               <p className="mt-1 text-gray-700">
-                {format(request.date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                {isValid(request.date) ? 
+                  format(request.date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR }) : 
+                  "Data inválida"
+                }
               </p>
             </div>
             <div>
@@ -365,7 +373,10 @@ const AdminRequests = () => {
               Solicitado por {request.userName} ({request.userEmail})
             </p>
             <p className="text-sm text-gray-500">
-              Criada em {format(request.createdAt, "dd/MM/yyyy 'às' HH:mm")}
+              Criada em {isValid(request.createdAt) ? 
+                format(request.createdAt, "dd/MM/yyyy 'às' HH:mm") : 
+                "Data inválida"
+              }
             </p>
           </div>
           
@@ -522,7 +533,10 @@ const AdminRequests = () => {
                             <td className="py-3">{request.userName}</td>
                             <td className="py-3">{request.type}</td>
                             <td className="py-3">
-                              {format(request.createdAt, "dd/MM/yyyy")}
+                              {isValid(request.createdAt) ? 
+                                format(request.createdAt, "dd/MM/yyyy") : 
+                                "Data inválida"
+                              }
                             </td>
                             <td className="py-3">
                               <RequestStatusBadge status={request.status} />
@@ -584,7 +598,10 @@ const AdminRequests = () => {
                             <RequestStatusBadge status={request.status} />
                           </div>
                           <CardDescription>
-                            {format(request.createdAt, "dd/MM/yyyy")} - {request.userName}
+                            {isValid(request.createdAt) ? 
+                              format(request.createdAt, "dd/MM/yyyy") : 
+                              "Data inválida"
+                            } - {request.userName}
                           </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -603,10 +620,18 @@ const AdminRequests = () => {
                             <p className="truncate text-sm">
                               {request.equipment && request.equipment.length > 0 ? (
                                 <>
-                                  {request.equipment[0].equipmentName} {request.equipment.length > 1 ? `(+${request.equipment.length - 1})` : ''} - {format(request.date, "dd/MM/yyyy")}
+                                  {request.equipment[0].equipmentName} {request.equipment.length > 1 ? `(+${request.equipment.length - 1})` : ''} - 
+                                  {isValid(request.date) ? 
+                                    format(request.date, "dd/MM/yyyy") : 
+                                    "Data inválida"
+                                  }
                                 </>
                               ) : (
-                                <>Sem equipamentos - {format(request.date, "dd/MM/yyyy")}</>
+                                <>Sem equipamentos - 
+                                {isValid(request.date) ? 
+                                  format(request.date, "dd/MM/yyyy") : 
+                                  "Data inválida"
+                                }</>
                               )}
                             </p>
                           )}
