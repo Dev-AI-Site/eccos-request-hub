@@ -601,7 +601,13 @@ const AdminRequests = () => {
                           )}
                           {request.type === "Reserva" && (
                             <p className="truncate text-sm">
-                              {request.equipment[0].equipmentName} {request.equipment.length > 1 ? `(+${request.equipment.length - 1})` : ''} - {format(request.date, "dd/MM/yyyy")}
+                              {request.equipment && request.equipment.length > 0 ? (
+                                <>
+                                  {request.equipment[0].equipmentName} {request.equipment.length > 1 ? `(+${request.equipment.length - 1})` : ''} - {format(request.date, "dd/MM/yyyy")}
+                                </>
+                              ) : (
+                                <>Sem equipamentos - {format(request.date, "dd/MM/yyyy")}</>
+                              )}
                             </p>
                           )}
                           <div className="flex gap-2 mt-4">
