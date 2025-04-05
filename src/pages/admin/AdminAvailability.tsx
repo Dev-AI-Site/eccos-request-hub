@@ -31,7 +31,6 @@ const AdminAvailability = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   useEffect(() => {
-    // Verificar se é admin
     if (!isAdmin) {
       navigate("/dashboard");
       return;
@@ -70,7 +69,6 @@ const AdminAvailability = () => {
     try {
       setIsSubmitting(true);
       
-      // Verificar por datas que já estão disponíveis
       const existingDates = availableDates.map(d => d.date.setHours(0, 0, 0, 0));
       const newDates = selectedDates.filter(d => !existingDates.includes(new Date(d).setHours(0, 0, 0, 0)));
       
@@ -78,7 +76,7 @@ const AdminAvailability = () => {
         toast({
           title: "Datas já disponíveis",
           description: "Todas as datas selecionadas já estão disponíveis.",
-          variant: "warning",
+          variant: "default",
         });
         setIsSubmitting(false);
         return;
@@ -86,7 +84,6 @@ const AdminAvailability = () => {
       
       await addAvailableDates(newDates);
       
-      // Atualizar a lista
       const updatedDates = await getAvailableDates();
       setAvailableDates(updatedDates);
       
@@ -95,7 +92,7 @@ const AdminAvailability = () => {
         description: `${newDates.length} nova(s) data(s) adicionada(s) com sucesso.`,
       });
       
-      setSelectedDates([]); // Limpar seleção
+      setSelectedDates([]);
     } catch (error) {
       console.error("Error adding dates:", error);
       toast({
@@ -115,7 +112,6 @@ const AdminAvailability = () => {
       setIsSubmitting(true);
       await removeAvailableDate(dateToDelete.id!);
       
-      // Atualizar a lista
       setAvailableDates(availableDates.filter(d => d.id !== dateToDelete.id));
       
       toast({
