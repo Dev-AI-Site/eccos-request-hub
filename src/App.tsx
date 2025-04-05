@@ -17,6 +17,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminReservation from "./pages/admin/AdminReservation";
 import NotFound from "./pages/NotFound";
 import LoadingSpinner from "./components/LoadingSpinner";
+import "./App.css";
 
 const queryClient = new QueryClient();
 
@@ -98,20 +99,12 @@ const App = () => (
               } 
             />
             
-            {/* Protected Admin Routes */}
+            {/* Protected Admin Routes - Organizadas com as principais primeiro */}
             <Route 
-              path="/admin/solicitacoes" 
+              path="/admin" 
               element={
                 <ProtectedRoute adminRequired>
-                  <AdminRequests />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/admin/disponibilidade" 
-              element={
-                <ProtectedRoute adminRequired>
-                  <AdminAvailability />
+                  <Navigate to="/admin/equipamentos" replace />
                 </ProtectedRoute>
               } 
             />
@@ -124,10 +117,28 @@ const App = () => (
               } 
             />
             <Route 
+              path="/admin/disponibilidade" 
+              element={
+                <ProtectedRoute adminRequired>
+                  <AdminAvailability />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
               path="/admin/usuarios" 
               element={
                 <ProtectedRoute adminRequired>
                   <AdminUsers />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* Rotas admin secundárias */}
+            <Route 
+              path="/admin/solicitacoes" 
+              element={
+                <ProtectedRoute adminRequired>
+                  <AdminRequests />
                 </ProtectedRoute>
               } 
             />

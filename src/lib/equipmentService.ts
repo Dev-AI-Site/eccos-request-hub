@@ -21,7 +21,7 @@ export const getAllEquipment = async (): Promise<Equipment[]> => {
       throw new Error("Usuário não autenticado");
     }
     
-    // Buscar todos os equipamentos
+    // As regras do Firebase garantirão que apenas usuários autenticados possam ler
     const equipmentQuery = query(collection(db, "equipment"));
     const querySnapshot = await getDocs(equipmentQuery);
     
@@ -45,6 +45,7 @@ export const getEquipmentByType = async (type: EquipmentType): Promise<Equipment
       throw new Error("Usuário não autenticado");
     }
     
+    // As regras do Firebase garantirão que apenas usuários autenticados possam ler
     const equipmentQuery = query(
       collection(db, "equipment"),
       where("type", "==", type)
@@ -62,7 +63,7 @@ export const getEquipmentByType = async (type: EquipmentType): Promise<Equipment
   }
 };
 
-// Add new equipment
+// Add new equipment (apenas admin pode adicionar equipamentos)
 export const addEquipment = async (equipment: Omit<Equipment, "id">): Promise<string> => {
   try {
     const currentUser = auth.currentUser;
@@ -72,6 +73,7 @@ export const addEquipment = async (equipment: Omit<Equipment, "id">): Promise<st
       throw new Error("Usuário não autenticado");
     }
     
+    // As regras do Firebase garantirão que apenas admins possam criar equipamentos
     const docRef = await addDoc(collection(db, "equipment"), equipment);
     return docRef.id;
   } catch (error) {
@@ -80,7 +82,7 @@ export const addEquipment = async (equipment: Omit<Equipment, "id">): Promise<st
   }
 };
 
-// Delete equipment
+// Delete equipment (apenas admin pode excluir equipamentos)
 export const deleteEquipment = async (equipmentId: string): Promise<void> => {
   try {
     const currentUser = auth.currentUser;
@@ -90,6 +92,7 @@ export const deleteEquipment = async (equipmentId: string): Promise<void> => {
       throw new Error("Usuário não autenticado");
     }
     
+    // As regras do Firebase garantirão que apenas admins possam excluir equipamentos
     await deleteDoc(doc(db, "equipment", equipmentId));
   } catch (error) {
     console.error("Error deleting equipment:", error);

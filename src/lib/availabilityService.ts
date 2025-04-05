@@ -18,6 +18,7 @@ export const getAvailableDates = async (): Promise<AvailabilityDate[]> => {
       throw new Error("Usuário não autenticado");
     }
     
+    // As regras do Firebase garantirão que apenas usuários autenticados possam ler
     const availabilityQuery = query(
       collection(db, "availability"),
       where("isAvailable", "==", true)
@@ -36,8 +37,8 @@ export const getAvailableDates = async (): Promise<AvailabilityDate[]> => {
   }
 };
 
-// Add available date
-export const addAvailableDate = async (date: Date): Promise<string> => {
+// Add multiple available dates
+export const addAvailableDates = async (dates: Date[]): Promise<string[]> => {
   try {
     const currentUser = auth.currentUser;
     
@@ -46,13 +47,30 @@ export const addAvailableDate = async (date: Date): Promise<string> => {
       throw new Error("Usuário não autenticado");
     }
     
-    const availabilityData = {
-      date,
-      isAvailable: true,
-    };
+    // As regras do Firebase garantirão que apenas admins possam criar datas
+    const ids: string[] = [];
     
-    const docRef = await addDoc(collection(db, "availability"), availabilityData);
-    return docRef.id;
+    // Adicionar cada data como um documento separado
+    for (const date of dates) {
+      const docRef = await addDoc(collection(db, "availability"), {
+        date,
+        isAvailable: true,
+      });
+      ids.push(docRef.id);
+    }
+    
+    return ids;
+  } catch (error) {
+    console.error("Error adding available dates:", error);
+    throw error;
+  }
+};
+
+// Add single available date (para compatibilidade com código existente)
+export const addAvailableDate = async (date: Date): Promise<string> => {
+  try {
+    const ids = await addAvailableDates([date]);
+    return ids[0];
   } catch (error) {
     console.error("Error adding available date:", error);
     throw error;
@@ -69,6 +87,7 @@ export const removeAvailableDate = async (dateId: string): Promise<void> => {
       throw new Error("Usuário não autenticado");
     }
     
+    // As regras do Firebase garantirão que apenas admins possam excluir datas
     await deleteDoc(doc(db, "availability", dateId));
   } catch (error) {
     console.error("Error removing available date:", error);

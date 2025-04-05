@@ -1,3 +1,4 @@
+
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore";
 import { auth, db } from "./firebase";
 import { sendRequestNotification, sendStatusChangeNotification } from "./emailService";
@@ -55,11 +56,16 @@ export interface SupportRequest extends BaseRequest {
 // Reservation request
 export type EquipmentType = "Chromebook" | "iPad";
 
-export interface ReservationRequest extends BaseRequest {
-  type: "Reserva";
+// Item de equipamento para reserva
+export interface ReservationEquipment {
   equipmentId: string;
   equipmentName: string;
   equipmentType: EquipmentType;
+}
+
+export interface ReservationRequest extends BaseRequest {
+  type: "Reserva";
+  equipment: ReservationEquipment[]; // Array de equipamentos
   date: Date;
   startTime: string;
   endTime: string;

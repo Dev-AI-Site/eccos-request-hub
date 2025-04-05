@@ -21,13 +21,13 @@ const AdminReservation = () => {
   return (
     <>
       <Header />
-      <div className="container mx-auto px-4 py-8">
-        <Alert variant="default" className="mb-8 bg-amber-50 text-amber-800 border-amber-200">
+      <div className="container mx-auto px-4 py-8 animate-fade-in">
+        <Alert variant="default" className="mb-8 bg-amber-50 text-amber-800 border-amber-200 shadow-md hover:shadow-lg transition-all duration-300">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Modo Administrador</AlertTitle>
+          <AlertTitle className="font-bold">Modo Administrador</AlertTitle>
           <AlertDescription>
-            Como administrador, você pode fazer reservas sem restrições de disponibilidade. 
-            Use essa funcionalidade com responsabilidade.
+            Como administrador da Tecnologia ECCOS, você pode fazer reservas sem restrições de disponibilidade. 
+            Utilize essa funcionalidade com responsabilidade.
           </AlertDescription>
         </Alert>
         
