@@ -37,7 +37,6 @@ const AdminRequests = () => {
   const [statusUpdateConfirmOpen, setStatusUpdateConfirmOpen] = useState(false);
   const [newStatus, setNewStatus] = useState<RequestStatus | null>(null);
   
-  // Fetch requests
   useEffect(() => {
     const fetchRequests = async () => {
       try {
@@ -60,7 +59,6 @@ const AdminRequests = () => {
     fetchRequests();
   }, [showCompleted, toast]);
   
-  // Apply filters
   useEffect(() => {
     let result = [...requests];
     
@@ -75,7 +73,6 @@ const AdminRequests = () => {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter((request) => {
-        // Search in user name and email
         if (
           request.userName.toLowerCase().includes(query) ||
           request.userEmail.toLowerCase().includes(query)
@@ -83,7 +80,6 @@ const AdminRequests = () => {
           return true;
         }
         
-        // Search in different fields based on request type
         if (request.type === "Compra") {
           return (
             request.items.some((item) => item.name.toLowerCase().includes(query)) ||
@@ -97,7 +93,7 @@ const AdminRequests = () => {
           );
         } else if (request.type === "Reserva") {
           return (
-            request.equipmentName.toLowerCase().includes(query) ||
+            request.equipment.some(eq => eq.equipmentName.toLowerCase().includes(query)) ||
             request.location.toLowerCase().includes(query) ||
             request.purpose.toLowerCase().includes(query)
           );
@@ -127,15 +123,12 @@ const AdminRequests = () => {
     try {
       await updateRequestStatus(selectedRequest.id!, newStatus, user.email!);
       
-      // Update local state
       const updatedRequests = requests.map(req => 
         req.id === selectedRequest.id 
           ? { ...req, status: newStatus } 
           : req
       );
       
-      // If hiding completed/canceled and the new status is one of those, 
-      // remove from the list
       if (!showCompleted && (newStatus === "Concluida" || newStatus === "Cancelado")) {
         setRequests(updatedRequests.filter(req => 
           req.id !== selectedRequest.id
@@ -144,7 +137,6 @@ const AdminRequests = () => {
         setRequests(updatedRequests);
       }
       
-      // Update selected request
       setSelectedRequest({
         ...selectedRequest,
         status: newStatus,
@@ -172,7 +164,6 @@ const AdminRequests = () => {
     try {
       await deleteRequest(selectedRequest.id!);
       
-      // Update local state
       setRequests(requests.filter(req => req.id !== selectedRequest.id));
       
       setIsDetailsOpen(false);
@@ -203,7 +194,6 @@ const AdminRequests = () => {
         message
       );
       
-      // Update local state with new message
       const newMessage = {
         userId: user.uid,
         userName: user.displayName || user.email!,
@@ -218,7 +208,6 @@ const AdminRequests = () => {
       
       setSelectedRequest(updatedRequest);
       
-      // Update request in the list
       const updatedRequests = requests.map(req => 
         req.id === selectedRequest.id ? updatedRequest : req
       );
@@ -333,7 +322,12 @@ const AdminRequests = () => {
             <div>
               <h3 className="font-medium">Equipamento</h3>
               <p className="mt-1 text-gray-700">
-                {request.equipmentName} ({request.equipmentType})
+                {request.equipment.map((eq, index) => (
+                  <span key={eq.equipmentId}>
+                    {eq.equipmentName} ({eq.equipmentType})
+                    {index < request.equipment.length - 1 ? ', ' : ''}
+                  </span>
+                ))}
               </p>
             </div>
             <div>
@@ -607,7 +601,7 @@ const AdminRequests = () => {
                           )}
                           {request.type === "Reserva" && (
                             <p className="truncate text-sm">
-                              {request.equipmentName} - {format(request.date, "dd/MM/yyyy")}
+                              {request.equipment[0].equipmentName} {request.equipment.length > 1 ? `(+${request.equipment.length - 1})` : ''} - {format(request.date, "dd/MM/yyyy")}
                             </p>
                           )}
                           <div className="flex gap-2 mt-4">

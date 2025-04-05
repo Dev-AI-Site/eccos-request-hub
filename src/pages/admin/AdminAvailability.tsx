@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
@@ -61,9 +60,9 @@ const AdminAvailability = () => {
   const handleAddDates = async () => {
     if (!selectedDates || selectedDates.length === 0) {
       toast({
-        title: "Seleção necessária",
-        description: "Por favor, selecione pelo menos uma data.",
-        variant: "destructive",
+        title: "Dica",
+        description: "Selecione pelo menos uma data para marcar como disponível.",
+        variant: "default",
       });
       return;
     }

@@ -37,7 +37,6 @@ const Dashboard = () => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
-  // Fetch requests
   useEffect(() => {
     const fetchRequests = async () => {
       if (!user) return;
@@ -62,7 +61,6 @@ const Dashboard = () => {
     fetchRequests();
   }, [user, toast]);
 
-  // Apply filters
   useEffect(() => {
     let result = [...requests];
 
@@ -77,7 +75,6 @@ const Dashboard = () => {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter((request) => {
-        // Search in different fields based on request type
         if (request.type === "Compra") {
           return (
             request.items.some((item) => item.name.toLowerCase().includes(query)) ||
@@ -91,7 +88,7 @@ const Dashboard = () => {
           );
         } else if (request.type === "Reserva") {
           return (
-            request.equipmentName.toLowerCase().includes(query) ||
+            request.equipment.some(eq => eq.equipmentName.toLowerCase().includes(query)) ||
             request.location.toLowerCase().includes(query) ||
             request.purpose.toLowerCase().includes(query)
           );
@@ -114,7 +111,6 @@ const Dashboard = () => {
     try {
       await updateRequestStatus(selectedRequest.id!, "Cancelado", user.email!);
       
-      // Update local state
       const updatedRequests = requests.map(req => 
         req.id === selectedRequest.id 
           ? { ...req, status: "Cancelado" as RequestStatus } 
@@ -150,7 +146,6 @@ const Dashboard = () => {
         message
       );
 
-      // Update local state with new message
       const newMessage = {
         userId: user.uid,
         userName: user.displayName || user.email!,
@@ -165,7 +160,6 @@ const Dashboard = () => {
 
       setSelectedRequest(updatedRequest);
       
-      // Update request in the list
       const updatedRequests = requests.map(req => 
         req.id === selectedRequest.id ? updatedRequest : req
       );
@@ -280,7 +274,12 @@ const Dashboard = () => {
             <div>
               <h3 className="font-medium">Equipamento</h3>
               <p className="mt-1 text-gray-700">
-                {request.equipmentName} ({request.equipmentType})
+                {request.equipment.map((eq, index) => (
+                  <span key={eq.equipmentId}>
+                    {eq.equipmentName} ({eq.equipmentType})
+                    {index < request.equipment.length - 1 ? ', ' : ''}
+                  </span>
+                ))}
               </p>
             </div>
             <div>
@@ -530,7 +529,7 @@ const Dashboard = () => {
                           )}
                           {request.type === "Reserva" && (
                             <p className="truncate text-sm">
-                              {request.equipmentName} - {format(request.date, "dd/MM/yyyy")}
+                              {request.equipment[0].equipmentName} {request.equipment.length > 1 ? `(+${request.equipment.length - 1})` : ''} - {format(request.date, "dd/MM/yyyy")}
                             </p>
                           )}
                           <Button
@@ -552,14 +551,12 @@ const Dashboard = () => {
         </Card>
       </main>
 
-      {/* Request Details Dialog */}
       <AlertDialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
         <AlertDialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           {selectedRequest && renderRequestDetails(selectedRequest)}
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Confirm Delete Dialog */}
       <ConfirmationDialog
         open={deleteConfirmOpen}
         onOpenChange={setDeleteConfirmOpen}
